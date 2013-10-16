@@ -1,0 +1,5 @@
+1,安装两个插件就可以了！不过是需要slackbuild的！
+http://slackbuilds.org/网址下载gst-plugins-bad和gst-plugins-ugly运行相应的SlackBuild文件就可以编译成slackware安装文件安装后就解决了！
+
+2,同时在http://slackbuilds.org下载mutagen方法同上，安装后到mp3文件所在的目录运行find . -iname "*.mp3" -execdir mid3iconv -e GBK {} \;
+即可
