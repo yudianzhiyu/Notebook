@@ -1,0 +1,46 @@
+
+Ipmitool –I open sensor  list                                命令可以获取传感器中的各种监测值和该值的监测阈值，包括（CPU温度，电压，风扇转速，电源调制模块温度，电源电压等信息）
+Ipmitool –I open sensor  get “CPU0Temp”          可以获取ID为CPU0Temp监测值，CPU0Temp是sensor的ID，服务器不同，ID表示也不同。
+Ipmitool –I open sensor  thresh                          设置ID值等于id的监测项的各种限制值。
+
+Ipmitool –I open chassis  status                          查看底盘状态，其中包括了底盘电源信息，底盘工作状态等
+Ipmitool –I open chassis  restart_cause              查看上次系统重启的原因
+Ipmitool –I open chassis  policy list                     查看支持的底盘电源相关策略。
+Ipmitool –I open chassis  power on                    启动底盘，用此命令可以远程开机
+Ipmitool –I open chassis  power off                    关闭底盘，用此命令可以远程开机
+Ipmitool –I open chassis  power reset                实现硬重启，用此命令可以远程开机
+
+Ipmi还可以设置系统启动boot的设备，具体见ipmitool帮助文档。
+Ipmitool –I open mc reset                                  使BMC重新硬启动
+Ipmitool –I open mc info                                    查看BMC硬件信息
+Ipmitool –I open mc getenables                         列出BMC所有允许的选项
+Ipmitool –I open mc setenables =[on|off]，        设置bmc相应的允许/禁止选项。
+
+Ipmitool-I open event 1                                     发送一个温度过高的消息到System Event Log中，可以发送的Event有：
+1        Temperature: Upper Critical: Going High
+2        Voltage Threshold: Lower Critical: Going Low
+3        Memory: Correctable ECC Error Detected
+Ipmitool-I open event                                               命令可以用测试配置的IPMI中的snmp功能是否成功。
+
+Ipmitool -I open lan print 1                                       打印现在channel 1的信息 。
+Ipmitool -I open lan set 1 ipaddr 10.10.113.95        设置channel 1 的地址为10.10.113.95
+Ipmitool -I open lan set 1 snmp public                     设置channel 1 上snmp的community为public。
+Ipmitool -I open lan set 1 access on                        设置channel 1允许访问。
+Ipmitool -I open pef info                                           打印Platform Event Filtering （pef）信息
+Ipmitool -I open pef status                                       查看Platform Event Filtering （pef）状态
+Ipmitool -I open pef policy                                        查看Platform Event Filtering （pef）策略设置
+Ipmitool -I open sdr list fru                                       读取fru信息并显示。
+ipmitool  -I open user list 1                                      显示所有用户
+ipmitool  -I open user set name                               设置用户名
+ipmitool  -I open user set password                         设置用户密码
+ipmitool  -I open user disable                                   禁用用户
+ipmitool  -I open user enable                                    启用用户
+备注：
+PEF由BMC厂商的FIRMWARE设置，ipmitool（V1.8.8）不能进行设置，也可以使用ipmiutil来进行初始设置。
+
+2.2.1使用ipmitool获取远程服务器信息
+Ipmitool 命令需要通过相应的interface来访问BMC，在本地获取信息时候采用的是-I open，即为OpenIPMI接口，IPMItool命令包含的接口有open、lan、lanplus。其中open是指的是OpenIPMI与 BMC通信，Lan是通过Ethernet LAN网用IPV4的udp协议与BMC通信。UDP的数据段包含了IPMI request/resoponse消息，消息具有一个IPMI session 头和RMCP 头。IPMI使用Remote Management Control Protocol (RMCP) 版本1支持操作系统关闭（pre-OS和OS-absent），RMCP把把数据发送到UDP的623端口。象lan接口一样，lanplus同样使用 Ethernet LAN 的UDP协议与BMC通信，但是lanplus使用RMCP＋协议（在IPMIV20中描述）来同新，RMCP+允许使用改经的认证方式和数据完整性检查。Open端口用于本地监控系统使用的；Lan/lanplus通过网络进行远程监控。
+
+远程获取服务器监控信息时，需要加上远程服务器的地址。使用以下的命令格式：
+        ipmitool -H 10.6.77.249 -U root -P changeme -I lan command。
+其中-H表示后面跟的是服务器的地址，-U表示后面跟着用户名，-P表示后面跟着用户密码，command与本地获取信息相同。
